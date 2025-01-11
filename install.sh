@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Update dan upgrade sistem
-sudo apt update && sudo apt upgrade -y
+sudo apt update -y
 
 # Install Python dan pip
 sudo apt install python3 python3-pip -y
@@ -16,7 +16,7 @@ pip install --upgrade pip
 pip install flask numpy yfinance tensorflow scikit-learn
 
 # Buat direktori proyek jika belum ada
-PROJECT_DIR="/opt/flask_crypto_app"
+PROJECT_DIR="/home/flask_crypto_app"
 sudo mkdir -p $PROJECT_DIR
 sudo chown $USER:$USER $PROJECT_DIR
 
