@@ -4,10 +4,9 @@
 sudo apt update -y
 
 # Install Python dan pip
-sudo apt install python3 python3-pip -y
+sudo apt install python3 python3-pip python3-venv -y
 
 # Buat virtual environment
-sudo apt install python3-venv -y
 python3 -m venv flask_env
 source flask_env/bin/activate
 
@@ -16,9 +15,9 @@ pip install --upgrade pip
 pip install flask numpy yfinance tensorflow scikit-learn
 
 # Buat direktori proyek jika belum ada
-PROJECT_DIR="/home/flask_crypto_app"
+PROJECT_DIR="/home/$USER/flask_crypto_app"
 sudo mkdir -p $PROJECT_DIR
-sudo chown $USER:$USER $PROJECT_DIR
+sudo chown -R $USER:$USER $PROJECT_DIR
 
 # Salin file aplikasi ke direktori proyek
 cp ./app.py $PROJECT_DIR
@@ -34,7 +33,7 @@ After=network.target
 [Service]
 User=$USER
 WorkingDirectory=$PROJECT_DIR
-ExecStart=/bin/bash -c 'source $PROJECT_DIR/flask_env/bin/activate && python3 $PROJECT_DIR/app.py'
+ExecStart=/bin/bash -c 'source /home/$USER/flask_crypto_app/flask_env/bin/activate && /home/$USER/flask_crypto_app/flask_env/bin/python /home/$USER/flask_crypto_app/app.py'
 Restart=always
 
 [Install]
