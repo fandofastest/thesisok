@@ -103,12 +103,12 @@ def predict():
         # Dapatkan detail model
         model_details = get_model_details(crypto, model_id)
 
-        # Buat link ke plot model
+        # Buat link ke plot model, dengan menggunakan root URL dari server
         plot_file = f"{PLOT_PATH}/{crypto}_model_{model_id}_plot.png"
         if not os.path.exists(plot_file):
             plot_link = None
         else:
-            plot_link = f"http://your-server-ip/{plot_file}"
+            plot_link = f"{request.url_root}{plot_file}"  # Menggunakan root URL dari server saat ini
 
         # Kembalikan respons JSON
         response = {
