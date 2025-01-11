@@ -6,23 +6,31 @@ sudo apt update -y
 # Install Python dan pip
 sudo apt install python3 python3-pip python3-venv -y
 
-# Buat virtual environment
+# Install dependensi lainnya
+sudo apt install python3-dev libpq-dev -y
+
+# Buat virtual environment untuk aplikasi
 python3 -m venv flask_env
 source flask_env/bin/activate
 
-# Install dependensi Python
+# Upgrade pip dan install dependensi Python
 pip install --upgrade pip
 pip install flask numpy yfinance tensorflow scikit-learn
 
 # Buat direktori proyek jika belum ada
 PROJECT_DIR="/home/$USER/flask_crypto_app"
-sudo mkdir -p $PROJECT_DIR
+mkdir -p $PROJECT_DIR
 sudo chown -R $USER:$USER $PROJECT_DIR
 
-# Salin file aplikasi ke direktori proyek
-cp ./app.py $PROJECT_DIR
-cp ./modeling_results.json $PROJECT_DIR
-mkdir -p $PROJECT_DIR/models $PROJECT_DIR/plots
+# Salin file aplikasi Flask (app.py) dan modeling_results.json ke direktori proyek
+echo "Copying Flask app files..."
+cp ./app.py $PROJECT_DIR/
+cp ./modeling_results.json $PROJECT_DIR/
+
+# Salin folder models dan plots ke dalam direktori proyek
+echo "Copying models and plots folders..."
+cp -r ./models $PROJECT_DIR/
+cp -r ./plots $PROJECT_DIR/
 
 # Buat file systemd service untuk aplikasi Flask
 SERVICE_FILE="/etc/systemd/system/flask_crypto_app.service"
@@ -32,8 +40,8 @@ After=network.target
 
 [Service]
 User=$USER
-WorkingDirectory='/home/thesisok'
-ExecStart=/bin/bash -c 'source /home/thesisok/flask_env/bin/activate && /home/thesisok/flask_env/bin/python /thesisok/app.py'
+WorkingDirectory=$PROJECT_DIR
+ExecStart=/bin/bash -c 'source $PROJECT_DIR/flask_env/bin/activate && python3 $PROJECT_DIR/app.py'
 Restart=always
 
 [Install]
