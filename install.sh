@@ -32,8 +32,8 @@ After=network.target
 
 [Service]
 User=$USER
-WorkingDirectory=$PROJECT_DIR
-ExecStart=/bin/bash -c 'source /home/$USER/flask_crypto_app/flask_env/bin/activate && /home/$USER/flask_crypto_app/flask_env/bin/python /home/$USER/flask_crypto_app/app.py'
+WorkingDirectory='/home/thesisok'
+ExecStart=/bin/bash -c 'source /home/thesisok/flask_env/bin/activate && /home/thesisok/flask_env/bin/python /thesisok/app.py'
 Restart=always
 
 [Install]
