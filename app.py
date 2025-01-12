@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import os
 import numpy as np
 import json
@@ -6,9 +6,12 @@ import yfinance as yf
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime, timedelta
+from flask_cors import CORS  # Import CORS
 
 # Inisialisasi Flask
 app = Flask(__name__)
+CORS(app)  # Mengizinkan semua origin untuk mengakses aplikasi
+
 
 # Path ke file JSON hasil modeling
 JSON_FILE = './modeling_results.json'
@@ -104,11 +107,11 @@ def predict():
         model_details = get_model_details(crypto, model_id)
 
         # Buat link ke plot model, dengan menggunakan root URL dari server
-        plot_file = f"{PLOT_PATH}/{crypto}_model_{model_id}_plot.png"
-        if not os.path.exists(plot_file):
+        plot_file = f"{crypto}_model_{model_id}_plot.png"
+        if not os.path.exists(os.path.join(PLOT_PATH, plot_file)):
             plot_link = None
         else:
-            plot_link = f"{request.url_root}{plot_file}"  # Menggunakan root URL dari server saat ini
+            plot_link = f"{request.url_root}plots/{plot_file}"  # Menggunakan route /plots/ di server saat ini
 
         # Kembalikan respons JSON
         response = {
@@ -126,6 +129,12 @@ def predict():
         return jsonify({'error': str(e)}), 400
     except Exception as e:
         return jsonify({'error': f"Terjadi kesalahan: {str(e)}"}), 500
+
+# Route untuk melayani file plot dari folder ./plots
+@app.route('/plots/<filename>')
+def serve_plot(filename):
+    # Menyajikan file gambar dari folder ./plots
+    return send_from_directory(PLOT_PATH, filename)
 
 if __name__ == '__main__':
     # Pastikan host dan port sesuai kebutuhan Anda

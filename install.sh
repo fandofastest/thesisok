@@ -16,6 +16,8 @@ source flask_env/bin/activate
 # Upgrade pip dan install dependensi Python
 pip install --upgrade pip
 pip install flask numpy yfinance tensorflow scikit-learn
+pip install flask-cors
+
 
 # Buat direktori proyek jika belum ada
 PROJECT_DIR="/home/$USER/flask_crypto_app"
