@@ -12,7 +12,6 @@ from flask_cors import CORS  # Import CORS
 app = Flask(__name__)
 CORS(app)  # Mengizinkan semua origin untuk mengakses aplikasi
 
-
 # Path ke file JSON hasil modeling
 JSON_FILE = './modeling_results.json'
 MODEL_PATH = './models'
@@ -39,12 +38,21 @@ def get_last_120_days_data(crypto):
         close_prices = data['Close'].values
 
         if len(close_prices) < 120:
-            raise ValueError(f"Data tidak mencukupi untuk {crypto}, hanya {len(close_prices)} hari yang tersedia.")
+            print(f"Data tidak mencukupi untuk {crypto}, hanya {len(close_prices)} hari yang tersedia. Data akan diisi ulang dengan padding nol.")
+            scaler = MinMaxScaler(feature_range=(0, 1))
+            scaled_data = scaler.fit_transform(close_prices.reshape(-1, 1))
 
-        # Normalisasi data
-        scaler = MinMaxScaler(feature_range=(0, 1))
-        scaled_data = scaler.fit_transform(close_prices.reshape(-1, 1))
-        return scaled_data[-120:].reshape(1, -1, 1), scaler
+            # Padding dengan nol di awal untuk mencapai 120 hari
+            padded_data = np.zeros((120, 1))  # Padding nol
+            padded_data[-len(scaled_data):] = scaled_data  # Sisipkan data di akhir
+
+            return padded_data.reshape(1, -1, 1), scaler
+        else:
+            # Normalisasi data
+            scaler = MinMaxScaler(feature_range=(0, 1))
+            scaled_data = scaler.fit_transform(close_prices.reshape(-1, 1))
+            return scaled_data[-120:].reshape(1, -1, 1), scaler
+
     except Exception as e:
         raise ValueError(f"Gagal mengambil data dari Yahoo Finance: {str(e)}")
 
